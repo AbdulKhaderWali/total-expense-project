@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+
+    <!-- <style>
+        body{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style> -->
+    <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
+        integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 h1">Xpers</span>
+        <span class="navbar-brand mb-0 h1" id="heading"></span>
+    </nav>
+    <div class="container-fluid bg-light" style="min-height: 100vh">
+        <div class="container">
+            <!-- <h1 ></h1> -->
+            <div class="jumbotron mt-4">
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="name">Name</span>
+                    </div>
+                    <input type="text" class="form-control" id="personName" placeholder="Your name"
+                        aria-label="person name" aria-describedby="name of person" />
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="spent in rupee">₹</span>
+                    </div>
+                    <input type="text" class="form-control" id="inputAmount" placeholder="Amount spent"
+                        aria-label="Amount spent" aria-describedby="spent in rupee" />
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="spent at">@</span>
+                    </div>
+                    <input type="text" id="desc" class="form-control" placeholder="spent On" aria-label="spent On"
+                        aria-describedby="spent at" />
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="button" id="btnAddExpense">Add</button>
+                    </div>
+                </div>
+            </div>
+            <div id="tableEl">
+                <ul class="list-group" id="tableEl">
+                </ul>
+            </div>
+            <!-- <div id="tableEl"></div> -->
+        </div>
+    </div>
+
+    <script>
+        //variable for adding expenses
+        let totalExpense = 0;
+        const inputElement = document.querySelector("#inputAmount");
+        const textEl = document.querySelector("#desc");
+        const nameEl = document.querySelector("#personName");
+        //get the heading to insert value in h1 tag
+        const headingEl = document.querySelector("#heading");
+        //reference for table div
+        const tablediv = document.querySelector("#tableEl");
+        //setting heading content
+        headingEl.textContent = totalExpense;
+        //function for adding total expenses
+        const allExpenses = [];
+        function addExpensetotal() {
+            // Storing input value in textAmount
+            const expenseItem = {};
+            const textAmount = inputElement.value;
+            const textDesc = textEl.value;
+            const being = nameEl.value;
+            // Converting string into number (10 is there because we have to convert it into decimal value)
+            const expense = parseInt(textAmount, 10);
+            totalExpense = totalExpense + expense;
+            //we have to change the content in h1 every time fuction is called
+            printHeading();
+            
+            // const someText = `Total : ${totalExpense}`
+            // headingEl.textContent = someText;
+            
+            //setting desc and amount in expenseItem object
+            expenseItem.desc = textDesc;
+            expenseItem.amount = expense;
+            expenseItem.moment = new Date();
+            expenseItem.name = being;
+            allExpenses.push(expenseItem);
+            deletedAmount.push(expenseItem.amount);
+            // console.clear(); 
+            // console.table(allExpenses);
+            
+            //mapping is simialr to looping
+            const allExpenseHTML = allExpenses.map(expense => createListItem(expense));
+            const allExpenseHTMLjoined = allExpenseHTML.join("");
+            tablediv.innerHTML = allExpenseHTMLjoined;
+        }
+
+        function printHeading(){
+                const someText = `Total : ${totalExpense}`
+                headingEl.textContent = someText;
+                
+        }
+        
+        function getDateString(moment) {
+            return moment.toLocaleDateString('en-US',
+                {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                })
+        }
+        deletedAmount = [];
+        function deleteItem(value) {
+            // console.log(value);
+            for (let i = 0; i < allExpenses.length; i++) {
+                // console.log(allExpenses[i].moment.valueOf());
+                
+                if (allExpenses[i].moment.valueOf() === value) {
+                    totalExpense = totalExpense - deletedAmount[i];
+                    printHeading();
+                    deletedAmount.splice(i,1);
+                    allExpenses.splice(i, 1);
+                    const allExpenseHTML = allExpenses.map(expense => createListItem(expense));
+                    const allExpenseHTMLjoined = allExpenseHTML.join("");
+                    tablediv.innerHTML = allExpenseHTMLjoined;
+                }
+            }
+        }
+
+        function createListItem({ desc, amount, moment, name }) {
+            // console.log(desc, amount);
+            return `
+                <li class="list-group-item d-flex justify-content-between">
+							<div class="d-flex flex-column">
+								${name + " has spent on " + desc}
+								<small class="text-muted">${getDateString(moment)}</small>
+							</div>
+							<div>
+								<span class="px-5">
+									${amount}
+								</span>
+								<button
+                                type="button"
+                                class="btn btn-outline-danger btn-sm"
+                                onclick="deleteItem(${moment.valueOf()})"
+                                >
+									<i class="fas fa-trash-alt"></i>
+								</button>
+							</div>
+						</li>`
+        }
+        // {return `<div> ${expenses.desc} :: ${expenses.amount}</div>`});
+
+
+        // const tableText = `
+        // <div> ${data1.desc} ::  ${data1.amount}</div>
+        // <div> ${data2.desc} ::  ${data2.amount}</div>
+        //`
+        // tablediv.innerHTML = tableText;
+
+        //converts array into a string format (so that we don't get a comma ",")
+
+        //Getting button in element
+        const element = document.querySelector("#btnAddExpense");
+        //Listen to the button cllick
+        element.addEventListener("click", addExpensetotal, false);
+        //more ways(get element by id,class)
+        //Whenever the button is clicked function is called
+    </script>
+</body>
+
+</html>
