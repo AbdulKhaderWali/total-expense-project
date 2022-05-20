@@ -9,15 +9,21 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
 
-    <!-- <style>
-        body{
+    <style>
+        /* body{
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
+        } */
+        th,td{
+            border: 2px solid black;
         }
-    </style> -->
+        .sorting{
+            margin-bottom: 10px;
+        }
+    </style>
     <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
         integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP"
         crossorigin="anonymous"></script>
@@ -57,11 +63,19 @@
                     </div>
                 </div>
             </div>
-            <div id="tableEl">
-                <ul class="list-group" id="tableEl">
-                </ul>
+            <div class="sorting">
+                <button class="btn btn-outline-primary" type="button" id="sort">sort</button>
             </div>
-            <!-- <div id="tableEl"></div> -->
+            <div id="tableCreation">
+                <table id="tableEl">
+                    <tr>
+                        <th>&nbsp;&nbsp; Name &nbsp;&nbsp;</th>
+                        <th>&nbsp;&nbsp; Spent on &nbsp;&nbsp;</th>
+                        <th>&nbsp;&nbsp; Amount &nbsp;&nbsp;</th>
+                        <th>&nbsp;&nbsp; Delete &nbsp;&nbsp;</th>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -71,6 +85,7 @@
         const inputElement = document.querySelector("#inputAmount");
         const textEl = document.querySelector("#desc");
         const nameEl = document.querySelector("#personName");
+        const sortBtn = document.querySelector("#sort");
         //get the heading to insert value in h1 tag
         const headingEl = document.querySelector("#heading");
         //reference for table div
@@ -101,13 +116,9 @@
             expenseItem.name = being;
             allExpenses.push(expenseItem);
             deletedAmount.push(expenseItem.amount);
-            // console.clear(); 
-            // console.table(allExpenses);
             
-            //mapping is simialr to looping
-            const allExpenseHTML = allExpenses.map(expense => createListItem(expense));
-            const allExpenseHTMLjoined = allExpenseHTML.join("");
-            tablediv.innerHTML = allExpenseHTMLjoined;
+            createListItem(expenseItem);
+            
         }
 
         function printHeading(){
@@ -126,58 +137,63 @@
         }
         deletedAmount = [];
         function deleteItem(value) {
-            // console.log(value);
+           
             for (let i = 0; i < allExpenses.length; i++) {
-                // console.log(allExpenses[i].moment.valueOf());
+               
                 
                 if (allExpenses[i].moment.valueOf() === value) {
                     totalExpense = totalExpense - deletedAmount[i];
                     printHeading();
                     deletedAmount.splice(i,1);
                     allExpenses.splice(i, 1);
-                    const allExpenseHTML = allExpenses.map(expense => createListItem(expense));
-                    const allExpenseHTMLjoined = allExpenseHTML.join("");
-                    tablediv.innerHTML = allExpenseHTMLjoined;
+                    // createListItem(expenseItem);
+                    tablediv.innerHTML = `<table>
+                    <tr>
+                        <th>&nbsp;&nbsp; Name &nbsp;&nbsp;</th>
+                        <th>&nbsp;&nbsp; Spent on &nbsp;&nbsp;</th>
+                        <th>&nbsp;&nbsp; Amount &nbsp;&nbsp;</th>
+                        <th>&nbsp;&nbsp; Delete &nbsp;&nbsp;</th>
+                    </tr>
+                </table>`;
+                    row = 1;
+                    allExpenses.map(expense => createListItem(expense));
+
                 }
             }
         }
 
+        let row = 1;
         function createListItem({ desc, amount, moment, name }) {
             // console.log(desc, amount);
-            return `
-                <li class="list-group-item d-flex justify-content-between">
-							<div class="d-flex flex-column">
-								${name + " has spent on " + desc}
-								<small class="text-muted">${getDateString(moment)}</small>
-							</div>
-							<div>
-								<span class="px-5">
-									${amount}
-								</span>
-								<button
+            const newRow = tablediv.insertRow(row);
+
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+            const cell4 = newRow.insertCell(3);
+
+            cell1.innerHTML = `&nbsp ${name} &nbsp`;
+            cell2.innerHTML = desc;
+            cell3.innerHTML = amount;
+            cell4.innerHTML = `<button
                                 type="button"
                                 class="btn btn-outline-danger btn-sm"
                                 onclick="deleteItem(${moment.valueOf()})"
                                 >
-									<i class="fas fa-trash-alt"></i>
-								</button>
-							</div>
-						</li>`
+								<i class="fas fa-trash-alt"></i>
+								</button>;`
+            row = 1 + row;
+            
         }
-        // {return `<div> ${expenses.desc} :: ${expenses.amount}</div>`});
 
-
-        // const tableText = `
-        // <div> ${data1.desc} ::  ${data1.amount}</div>
-        // <div> ${data2.desc} ::  ${data2.amount}</div>
-        //`
-        // tablediv.innerHTML = tableText;
-
-        //converts array into a string format (so that we don't get a comma ",")
-
+        function sortAmount(){
+            
+        }
+        
         //Getting button in element
         const element = document.querySelector("#btnAddExpense");
         //Listen to the button cllick
+        sortBtn.addEventListener("click",sortAmount, false);
         element.addEventListener("click", addExpensetotal, false);
         //more ways(get element by id,class)
         //Whenever the button is clicked function is called
