@@ -17,13 +17,16 @@
             align-items: center;
             height: 100vh;
         } */
-        th,td{
+        th,
+        td {
             border: 2px solid black;
         }
-        .sorting{
+
+        .sorting {
             margin-bottom: 10px;
         }
     </style>
+
     <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
         integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP"
         crossorigin="anonymous"></script>
@@ -82,6 +85,7 @@
     <script>
         //variable for adding expenses
         let totalExpense = 0;
+        let ascending = true;
         const inputElement = document.querySelector("#inputAmount");
         const textEl = document.querySelector("#desc");
         const nameEl = document.querySelector("#personName");
@@ -105,10 +109,10 @@
             totalExpense = totalExpense + expense;
             //we have to change the content in h1 every time fuction is called
             printHeading();
-            
+
             // const someText = `Total : ${totalExpense}`
             // headingEl.textContent = someText;
-            
+
             //setting desc and amount in expenseItem object
             expenseItem.desc = textDesc;
             expenseItem.amount = expense;
@@ -116,17 +120,17 @@
             expenseItem.name = being;
             allExpenses.push(expenseItem);
             deletedAmount.push(expenseItem.amount);
-            
+
             createListItem(expenseItem);
-            
+
         }
 
-        function printHeading(){
-                const someText = `Total : ${totalExpense}`
-                headingEl.textContent = someText;
-                
+        function printHeading() {
+            const someText = `Total : ${totalExpense}`
+            headingEl.textContent = someText;
+
         }
-        
+
         function getDateString(moment) {
             return moment.toLocaleDateString('en-US',
                 {
@@ -137,26 +141,17 @@
         }
         deletedAmount = [];
         function deleteItem(value) {
-           
+
             for (let i = 0; i < allExpenses.length; i++) {
-               
-                
+
+
                 if (allExpenses[i].moment.valueOf() === value) {
                     totalExpense = totalExpense - deletedAmount[i];
                     printHeading();
-                    deletedAmount.splice(i,1);
+                    deletedAmount.splice(i, 1);
                     allExpenses.splice(i, 1);
                     // createListItem(expenseItem);
-                    tablediv.innerHTML = `<table>
-                    <tr>
-                        <th>&nbsp;&nbsp; Name &nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp; Spent on &nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp; Amount &nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp; Delete &nbsp;&nbsp;</th>
-                    </tr>
-                </table>`;
-                    row = 1;
-                    allExpenses.map(expense => createListItem(expense));
+                    printTable();
 
                 }
             }
@@ -183,17 +178,41 @@
 								<i class="fas fa-trash-alt"></i>
 								</button>;`
             row = 1 + row;
-            
+
         }
 
-        function sortAmount(){
-            
+        function printTable() {
+            tablediv.innerHTML = `<table>
+                    <tr>
+                        <th>&nbsp;&nbsp; Name &nbsp;&nbsp;</th>
+                        <th>&nbsp;&nbsp; Spent on &nbsp;&nbsp;</th>
+                        <th>&nbsp;&nbsp; Amount &nbsp;&nbsp;</th>
+                        <th>&nbsp;&nbsp; Delete &nbsp;&nbsp;</th>
+                    </tr>
+                </table>`;
+            row = 1;
+            allExpenses.map(expense => createListItem(expense));
         }
-        
+
+        function sortAmount() {
+            if (ascending) {
+                allExpenses.sort(function (a, b) {
+                    return a.amount - b.amount;
+                });
+            }
+            else{
+                allExpenses.sort(function (a, b) {
+                    return b.amount - a.amount;
+                })
+            }
+            ascending = !ascending;
+            printTable();
+        }
+
         //Getting button in element
         const element = document.querySelector("#btnAddExpense");
         //Listen to the button cllick
-        sortBtn.addEventListener("click",sortAmount, false);
+        sortBtn.addEventListener("click", sortAmount, false);
         element.addEventListener("click", addExpensetotal, false);
         //more ways(get element by id,class)
         //Whenever the button is clicked function is called
