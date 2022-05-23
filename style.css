@@ -1,0 +1,12 @@
+table {
+    width: 100%;
+}
+
+th,td {
+    border: 2px solid black;
+    text-align: center;
+}
+
+.sorting {
+    margin-bottom: 10px;
+}
